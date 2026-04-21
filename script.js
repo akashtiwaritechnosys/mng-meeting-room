@@ -462,7 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const AI_API_DIRECT = 'https://communicate-prayers-playback-promote.trycloudflare.com/ask';
+    const AI_API_DIRECT = 'https://sufficient-respondents-mood-reuters.trycloudflare.com/ask';
     let aiIsBusy = false;
 
     // 5-tier cascade: direct → corsproxy.io → corsproxy.org → thingproxy → proxy.cors.sh
