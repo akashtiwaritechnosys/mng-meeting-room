@@ -12,7 +12,46 @@
 
 <body>
 
-    <div class="app-window session-ready">
+    <!-- MNG Login Overlay -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-card">
+            <div class="login-header">
+                <img src="MNG_Health.png" alt="MNG Health Logo" class="login-logo">
+                <h2>Virtual Event Access</h2>
+                <p>Please enter your details to join the session</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="full-name">Full Name</label>
+                    <input type="text" id="full-name" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label>Access Role</label>
+                    <div class="role-selector">
+                        <label class="role-option">
+                            <input type="radio" name="user-role" value="Organizer" required>
+                            <span class="role-box">
+                                <i class='bx bx-shield-quarter'></i>
+                                <span class="role-title">Organizer</span>
+                                <span class="role-desc">Manage session & questions</span>
+                            </span>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="user-role" value="Guest" required>
+                            <span class="role-box">
+                                <i class='bx bx-user'></i>
+                                <span class="role-title">Guest</span>
+                                <span class="role-desc">Participate in discussion</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="login-btn">Join Session</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="app-window">
 
         <!-- Tool Sidebar -->
         <aside class="sidebar">
@@ -50,8 +89,13 @@
                     </div>
                     <div class="timer-text">01:42:15</div>
                 </div>
+
                 <div class="header-right">
                     <button class="btn-ai-sugg"><i class='bx bx-bulb'></i> AI Suggestions</button>
+                    <button class="header-btn" id="logout-btn" title="Logout Session"
+                        style="background: rgba(225, 42, 31, 0.1); color: var(--c-red); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; margin-right: 8px;">
+                        <i class='bx bx-log-out' style="font-size: 16px;"></i> Logout
+                    </button>
                     <button class="header-btn notification-dot">
                         <i class='bx bx-bell'></i>
                     </button>
@@ -59,10 +103,13 @@
                         <i class='bx bx-chat'></i>
                     </button>
                     <div class="header-profile">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format&fit=crop"
-                            alt="Profile">
+                        <i class='bx bx-user'></i>
                         <i class='bx bx-chevron-down'></i>
+                        <div class="header-middle" id="nav-participants-chips">
+                            <!-- Dynamic participant list -->
+                        </div>
                     </div>
+
                 </div>
             </header>
 
@@ -144,7 +191,7 @@
                                 <div
                                     style="display:flex; align-items:center; justify-content:center; width:100%; height:100%; background:linear-gradient(135deg, #8db4f8, #1f2841);">
                                     <span style="font-size:24px; color:white; font-weight:600;">
-                                        <i class='bx bx-user'></i>
+                                        <i class="bx bx-group"></i>
                                     </span>
                                 </div>
                                 <span class="video-name bottom-left-name">
@@ -177,6 +224,8 @@
                     <div class="panel-tabs-slate">
                         <button class="tab-slate active" data-target="chatpane">Chat</button>
                         <button class="tab-slate" data-target="participants">Participants</button>
+                        <button class="tab-slate" id="nav-question-tab" data-target="questionpane"
+                            style="display: none;">Questions</button>
                         <button class="tab-slate" data-target="insights">Insights <span
                                 class="tab-badge">New</span></button>
                     </div>
@@ -188,65 +237,10 @@
 
                             <!-- Team Chat Thread -->
                             <div class="chat-history" id="chat-thread" style="display:flex;">
-
-                                <div
-                                    style="text-align:center; font-size:11px; font-weight:600; color:rgba(255,255,255,0.4); text-transform:uppercase; margin-bottom:10px;">
-                                    Recording has started
+                                <div id="chat-empty-state"
+                                    style="text-align:center; font-size:11px; font-weight:600; color:rgba(255,255,255,0.2); text-transform:uppercase; margin-top:20px;">
+                                    No messages in the session yet
                                 </div>
-
-                                <div class="msg-row incoming">
-                                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop"
-                                        class="msg-avatar" alt="Dr. Emily">
-                                    <div class="msg-stack">
-                                        <div style="font-size:12px; color:var(--c-text-secondary); margin-left:4px;">Dr.
-                                            Emily Stone • 10:05 AM</div>
-                                        <div class="msg-blob">Could we bring up the slides on the latest trial phase 3
-                                            data?</div>
-                                    </div>
-                                </div>
-
-                                <div class="msg-row self">
-                                    <div class="msg-stack">
-                                        <div
-                                            style="font-size:12px; color:var(--c-text-secondary); margin-right:4px; text-align:right;">
-                                            Dr. Sarah (You) • 10:08 AM</div>
-                                        <div class="msg-blob">Sure, I will share those momentarily after Dr. Chen
-                                            concludes his remarks.</div>
-                                    </div>
-                                </div>
-
-                                <div class="msg-row incoming" style="margin-top:8px;">
-                                    <div class="msg-stack" style="width:100%;">
-                                        <div class="poll-widget">
-                                            <div class="poll-q">Agree with revised protocols?</div>
-
-                                            <div class="poll-opt">
-                                                <div class="p-label">
-                                                    <span>Strongly Agree</span>
-                                                    <i class='bx bx-check'></i>
-                                                </div>
-                                                <div class="p-bar-bg">
-                                                    <div class="p-bar-fill" style="width: 65%;"></div>
-                                                </div>
-                                            </div>
-
-                                            <div class="poll-opt">
-                                                <div class="p-label"><span>Need More Data</span></div>
-                                                <div class="p-bar-bg">
-                                                    <div class="p-bar-fill warn" style="width: 25%;"></div>
-                                                </div>
-                                            </div>
-
-                                            <div class="poll-opt">
-                                                <div class="p-label"><span>Disagree</span></div>
-                                                <div class="p-bar-bg">
-                                                    <div class="p-bar-fill dang" style="width: 10%;"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
 
                             <div class="chat-input-area">
@@ -257,59 +251,28 @@
                             </div>
                         </div>
 
+                        <!-- QUESTION PANE (Organizer Only) -->
+                        <div class="tab-pane" id="questionpane">
+                            <div class="q-header-row">
+                                <div class="q-sub-tabs">
+                                    <button class="q-sub-tab active" data-filter="unresolved">Unresolved</button>
+                                    <button class="q-sub-tab" data-filter="all">All Questions</button>
+                                </div>
+                                <button id="download-questions" class="download-btn" title="Download Questions">
+                                    <i class='bx bx-download'></i> CSV
+                                </button>
+                            </div>
+                            <div class="question-list-container">
+                                <div class="question-list" id="question-list">
+                                    <!-- Questions populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- PARTICIPANTS PANE -->
                         <div class="tab-pane" id="participants">
-                            <div class="participants-list">
-
-                                <div class="pt-item">
-                                    <div class="pt-left">
-                                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100&auto=format&fit=crop"
-                                            class="pt-avatar">
-                                        <div class="pt-info">
-                                            <span class="pt-name">Dr. Sarah Jenkins (You)</span>
-                                            <span class="pt-role">Moderator</span>
-                                        </div>
-                                    </div>
-                                    <i class='bx bx-microphone pt-action active'
-                                        style="color:var(--c-text-secondary);"></i>
-                                </div>
-
-                                <div class="pt-item">
-                                    <div class="pt-left">
-                                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=100&auto=format&fit=crop"
-                                            class="pt-avatar">
-                                        <div class="pt-info">
-                                            <span class="pt-name">Dr. Robert Chen</span>
-                                            <span class="pt-role">Chief Oncologist</span>
-                                        </div>
-                                    </div>
-                                    <i class='bx bx-microphone pt-action active' style="color:#32D74B;"></i>
-                                </div>
-
-                                <div class="pt-item">
-                                    <div class="pt-left">
-                                        <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=100&auto=format&fit=crop"
-                                            class="pt-avatar">
-                                        <div class="pt-info">
-                                            <span class="pt-name">Dr. Emily Stone</span>
-                                            <span class="pt-role">Clinical Researcher</span>
-                                        </div>
-                                    </div>
-                                    <i class='bx bx-microphone-off pt-action muted'></i>
-                                </div>
-
-                                <div class="pt-item">
-                                    <div class="pt-left">
-                                        <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=100&auto=format&fit=crop"
-                                            class="pt-avatar">
-                                        <div class="pt-info">
-                                            <span class="pt-name">Dr. Marcus Webb</span>
-                                            <span class="pt-role">Medical Director</span>
-                                        </div>
-                                    </div>
-                                    <i class='bx bx-microphone-off pt-action muted'></i>
-                                </div>
-
+                            <div class="participants-list" id="participants-list">
+                                <!-- Populated dynamically -->
                             </div>
                         </div>
 
@@ -322,17 +285,17 @@
                                         <svg viewBox="0 0 36 36" style="width:100%; height:100%;">
                                             <path class="circle-bg"
                                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                            <path class="circle" stroke-dasharray="85, 100"
+                                            <path class="circle" id="engagement-circle" stroke-dasharray="0, 100"
                                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                         </svg>
-                                        <div class="chart-content">
-                                            85<span class="score-symbol">%</span>
+                                        <div class="chart-content" id="engagement-text">
+                                            0<span class="score-symbol">%</span>
                                         </div>
                                     </div>
                                     <div>
                                         <span style="font-size:13px; color:var(--c-text-secondary);">Current Session
                                             Avg.</span>
-                                        <div class="trend-up"><i class='bx bx-trending-up'></i> +5% from last mtg</div>
+                                        <div class="trend-up" id="engagement-trend">Initializing...</div>
                                     </div>
                                 </div>
                             </div>
@@ -355,10 +318,10 @@
 
                             <div class="insight-box" style="margin-bottom:0;">
                                 <h3><i class='bx bx-purchase-tag-alt'></i> Key Themes</h3>
-                                <div class="theme-tags">
-                                    <span class="thm-tag">Immunotherapy</span>
-                                    <span class="thm-tag">Protocols</span>
-                                    <span class="thm-tag">Compliance</span>
+                                <div class="theme-tags" id="theme-tags-list">
+                                    <!-- Populated dynamically -->
+                                    <span style="font-size:12px; color:var(--c-text-secondary);">Monitoring
+                                        conversation...</span>
                                 </div>
                             </div>
                         </div>
