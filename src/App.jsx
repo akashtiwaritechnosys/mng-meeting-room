@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import LoginOverlay from './components/LoginOverlay';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import VideoGrid from './components/VideoGrid';
-import FloatingDock from './components/FloatingDock';
-import ChatColumn from './components/ChatColumn';
-import BotFab from './components/BotFab';
+
+const VideoGrid = lazy(() => import('./components/VideoGrid'));
+const FloatingDock = lazy(() => import('./components/FloatingDock'));
+const ChatColumn = lazy(() => import('./components/ChatColumn'));
+const BotFab = lazy(() => import('./components/BotFab'));
 
 function App() {
   const [userName, setUserName] = useState(localStorage.getItem('mng_user_name') || 'Guest');
@@ -106,18 +107,22 @@ function App() {
             setChatHidden={setChatHidden}
           />
           <div className="workspace-body">
-            <VideoGrid />
-            <FloatingDock onEnd={handleLogout} />
-            <ChatColumn 
-              userName={userName} 
-              userRole={userRole} 
-              chatHidden={chatHidden} 
-            />
+            <Suspense fallback={<div style={{ display: 'none' }}></div>}>
+                <VideoGrid />
+                <FloatingDock onEnd={handleLogout} />
+                <ChatColumn 
+                  userName={userName} 
+                  userRole={userRole} 
+                  chatHidden={chatHidden} 
+                />
+            </Suspense>
           </div>
         </main>
       </div>
       
-      {sessionReady && <BotFab />}
+      <Suspense fallback={<div style={{ display: 'none' }}></div>}>
+        {sessionReady && <BotFab />}
+      </Suspense>
     </>
   );
 }

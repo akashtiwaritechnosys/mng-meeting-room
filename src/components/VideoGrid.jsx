@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 const allParticipants = [
   { name: "Dr. Priya Nair", role: "FDA Consultant", avatar: "/doctor6.jpg", muted: false },
@@ -9,7 +9,7 @@ const allParticipants = [
   { name: "Dr. David Kim", role: "Clinical Researcher", avatar: "/doctor4.jpg", muted: true },
 ];
 
-const VideoGrid = () => {
+const VideoGrid = memo(() => {
   return (
     <div className="video-column responsive-grid" id="video-column">
       {allParticipants.map((p, idx) => (
@@ -41,6 +41,6 @@ const VideoGrid = () => {
       </div>
     </div>
   );
-};
+});
 
 export default VideoGrid;

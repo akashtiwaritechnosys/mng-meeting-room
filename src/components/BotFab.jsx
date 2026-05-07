@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 
-const BotFab = () => {
+const BotFab = memo(() => {
     const [isOpen, setIsOpen] = useState(false);
     const [aiChatHistory, setAiChatHistory] = useState(() => JSON.parse(localStorage.getItem('mng_ai_chat')) || []);
     const [inputMsg, setInputMsg] = useState('');
@@ -208,6 +208,6 @@ const BotFab = () => {
             </div>
         </>
     );
-};
+});
 
 export default BotFab;
