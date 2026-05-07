@@ -32,8 +32,7 @@
 
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    /* background: radial-gradient(circle at center, #0F4DD6 0%, #001A66 100%); */
-    background: #5d84a5;
+    background: #2b5477;
     height: 100vh;
     /* display: flex;
     align-items: center;
@@ -270,8 +269,55 @@ body {
 .header-profile {
     display: flex;
     align-items: center;
-    gap: 8px;
     cursor: pointer;
+    position: relative;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 140%;
+    right: 0;
+    background: rgba(30, 33, 41, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--rad-md);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 180px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1000;
+}
+
+.header-profile:hover .profile-dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.profile-dropdown .dropdown-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-dropdown .label {
+    font-size: 11px;
+    color: var(--c-text-secondary);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.profile-dropdown .val {
+    font-size: 13px;
+    color: white;
+    font-weight: 500;
 }
 
 .header-profile img {
@@ -283,7 +329,7 @@ body {
 
 .header-profile i {
     color: var(--c-text-secondary);
-    font-size: 14px;
+    font-size: 22px;
 }
 
 .notification-dot {

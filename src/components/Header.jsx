@@ -32,6 +32,32 @@ const Header = ({ userName, userRole, onLogout, chatHidden, setChatHidden }) => 
   };
 
   const firstName = userName ? userName.split(' ')[0] : 'Guest';
+  const [meetingId, setMeetingId] = useState('Loading...');
+
+  useEffect(() => {
+    const fetchMeetingId = async () => {
+      try {
+        // 1. First, attempt to fetch the active meeting ID directly from the API
+        const response = await fetch('/api/current_meeting');
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.meeting_id) {
+            setMeetingId(data.meeting_id);
+            // Sync local storage with truth from API
+            localStorage.setItem('mng_meeting_id', data.meeting_id);
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn("API fetch for meeting ID failed or endpoint unavailable. Falling back to local storage.", error);
+      }
+      
+      // 2. Fallback to local storage if API is unreachable
+      setMeetingId(localStorage.getItem('mng_meeting_id') || 'Unknown ID');
+    };
+
+    fetchMeetingId();
+  }, []);
 
   return (
     <header className="app-header">
@@ -59,8 +85,15 @@ const Header = ({ userName, userRole, onLogout, chatHidden, setChatHidden }) => 
         <div className="header-profile">
             <i className='bx bx-user'></i>
             <i className='bx bx-chevron-down'></i>
-            <div className="header-middle" id="nav-participants-chips">
-                <div className="pt-chip self">{firstName} (You)</div>
+            <div className="profile-dropdown">
+                <div className="dropdown-item">
+                    <span className="label">User:</span>
+                    <span className="val">{firstName} ({userRole})</span>
+                </div>
+                <div className="dropdown-item">
+                    <span className="label">Meeting ID:</span>
+                    <span className="val">{meetingId}</span>
+                </div>
             </div>
         </div>
       </div>
