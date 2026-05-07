@@ -32,31 +32,28 @@ const Header = ({ userName, userRole, onLogout, chatHidden, setChatHidden }) => 
   };
 
   const firstName = userName ? userName.split(' ')[0] : 'Guest';
-  const [meetingId, setMeetingId] = useState('Loading...');
+  const [meetingId, setMeetingId] = useState(localStorage.getItem('mng_meeting_id') || 'Unknown ID');
 
   useEffect(() => {
-    const fetchMeetingId = async () => {
+    // Background validation of the meeting ID
+    const validateMeeting = async () => {
+      const localMid = localStorage.getItem('mng_meeting_id');
+      if (!localMid) return;
+
       try {
-        // 1. First, attempt to fetch the active meeting ID directly from the API
-        const response = await fetch('/api/current_meeting');
+        const response = await fetch(`/api/meeting/${localMid}`);
         if (response.ok) {
           const data = await response.json();
           if (data && data.meeting_id) {
             setMeetingId(data.meeting_id);
-            // Sync local storage with truth from API
-            localStorage.setItem('mng_meeting_id', data.meeting_id);
-            return;
           }
         }
       } catch (error) {
-        console.warn("API fetch for meeting ID failed or endpoint unavailable. Falling back to local storage.", error);
+        console.warn("Background API ping failed on Vercel, continuing with local session data.", error);
       }
-      
-      // 2. Fallback to local storage if API is unreachable
-      setMeetingId(localStorage.getItem('mng_meeting_id') || 'Unknown ID');
     };
 
-    fetchMeetingId();
+    validateMeeting();
   }, []);
 
   return (
@@ -73,28 +70,28 @@ const Header = ({ userName, userRole, onLogout, chatHidden, setChatHidden }) => 
       <div className="header-right">
         <button className="btn-ai-sugg" onClick={handleAISugg}><i className='bx bx-bulb'></i> AI Suggestions</button>
         <button className="header-btn" id="logout-btn" title="Logout Session" onClick={onLogout}
-            style={{background: 'rgba(225, 42, 31, 0.1)', color: 'var(--c-red)', padding: '6px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px', marginRight: '8px'}}>
-            <i className='bx bx-log-out' style={{fontSize: '16px'}}></i> Logout
+          style={{ background: 'rgba(225, 42, 31, 0.1)', color: 'var(--c-red)', padding: '6px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px', marginRight: '8px' }}>
+          <i className='bx bx-log-out' style={{ fontSize: '16px' }}></i> Logout
         </button>
         <button className="header-btn notification-dot">
-            <i className='bx bx-bell'></i>
+          <i className='bx bx-bell'></i>
         </button>
         <button className="header-btn" id="panel-toggle-btn" title="Toggle Chat Panel" onClick={toggleChat} style={{ color: !chatHidden ? 'var(--c-blue)' : 'var(--c-text-secondary)' }}>
-            <i className='bx bx-chat'></i>
+          <i className='bx bx-chat'></i>
         </button>
         <div className="header-profile">
-            <i className='bx bx-user'></i>
-            <i className='bx bx-chevron-down'></i>
-            <div className="profile-dropdown">
-                <div className="dropdown-item">
-                    <span className="label">User:</span>
-                    <span className="val">{firstName} ({userRole})</span>
-                </div>
-                <div className="dropdown-item">
-                    <span className="label">Meeting ID:</span>
-                    <span className="val">{meetingId}</span>
-                </div>
+          <i className='bx bx-user'></i>
+          <i className='bx bx-chevron-down'></i>
+          <div className="profile-dropdown">
+            <div className="dropdown-item">
+              <span className="label">User:</span>
+              <span className="val">{firstName} ({userRole})</span>
             </div>
+            <div className="dropdown-item">
+              <span className="label">Meeting ID:</span>
+              <span className="val">{meetingId}</span>
+            </div>
+          </div>
         </div>
       </div>
     </header>
