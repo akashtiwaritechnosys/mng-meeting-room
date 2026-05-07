@@ -32,7 +32,8 @@
 
 body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: radial-gradient(circle at center, #0F4DD6 0%, #001A66 100%);
+    /* background: radial-gradient(circle at center, #0F4DD6 0%, #001A66 100%); */
+    background: #5d84a5;
     height: 100vh;
     /* display: flex;
     align-items: center;
