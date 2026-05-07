@@ -7,7 +7,7 @@ const participantsData = [
   { name: "Dr. Priya Nair", role: "FDA Consultant", avatar: "/doctor6.jpg", muted: false }
 ];
 
-const ChatColumn = ({ userName, userRole, chatHidden }) => {
+const ChatColumn = ({ userName, userRole, meetingId, chatHidden }) => {
   const [activeTab, setActiveTab] = useState('chatpane');
   const [chatMsg, setChatMsg] = useState('');
   const [teamChatHistory, setTeamChatHistory] = useState(() => JSON.parse(localStorage.getItem('mng_team_chat')) || []);
@@ -34,7 +34,6 @@ const ChatColumn = ({ userName, userRole, chatHidden }) => {
 
   useEffect(() => {
     const fetchQuestions = async () => {
-      const meetingId = localStorage.getItem('mng_meeting_id');
       if (!meetingId) return;
 
       try {
@@ -56,7 +55,20 @@ const ChatColumn = ({ userName, userRole, chatHidden }) => {
               text: item.question || item.text || 'Question text unavailable',
               time: (item.timestamp || item.time) ? (() => {
                 const t = item.timestamp || item.time;
-                const d = new Date(t);
+                let d;
+                // Handle Unix timestamps in seconds (common from Python backends)
+                if (typeof t === 'number' && t < 10000000000) {
+                  d = new Date(t * 1000);
+                } else if (typeof t === 'string' && !isNaN(Number(t)) && Number(t) < 10000000000) {
+                  d = new Date(Number(t) * 1000);
+                } else {
+                  // If string is an ISO string without timezone indicator (like '2026-05-07T09:21:43.691375'), append 'Z' to parse as UTC
+                  let tStr = String(t);
+                  if (tStr.includes('T') && !tStr.endsWith('Z') && !tStr.match(/[+-]\d\d:?\d\d$/)) {
+                    tStr += 'Z';
+                  }
+                  d = new Date(tStr);
+                }
                 return !isNaN(d.getTime()) ? d.toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : t;
               })() : new Date().toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
               status: item.status ? item.status.toLowerCase() : 'unresolved',

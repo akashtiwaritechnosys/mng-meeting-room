@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const FloatingDock = ({ onEnd }) => {
+const FloatingDock = ({ onEnd, userRole }) => {
   const [micActive, setMicActive] = useState(true);
   const [camActive, setCamActive] = useState(true);
 
@@ -33,7 +33,12 @@ const FloatingDock = ({ onEnd }) => {
       <button className="dock-tool" data-tooltip="Share Screen"><i className='bx bx-desktop'></i></button>
       <button className="dock-tool" data-tooltip="View Engagement Metrics"><i className='bx bx-bar-chart-alt-2'></i></button>
       <button className="dock-tool" data-tooltip="Send Reaction"><i className='bx bx-smile'></i></button>
-      <button className="dock-tool dock-end" onClick={onEnd} data-tooltip="End Meeting"><i className='bx bx-power-off'></i></button>
+      
+      {userRole === 'Organizer' && (
+        <button className="dock-tool dock-end" onClick={onEnd} data-tooltip="End Meeting">
+          <i className='bx bx-power-off'></i>
+        </button>
+      )}
     </div>
   );
 };

@@ -37,7 +37,7 @@ const BotFab = memo(() => {
 
     const addQuestionToSession = (text, status = "unresolved") => {
         const now = new Date();
-        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const timeStr = now.toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         const sessionQuestions = JSON.parse(localStorage.getItem('mng_session_questions')) || [];
 
         const newQ = {
@@ -45,6 +45,7 @@ const BotFab = memo(() => {
             user: localStorage.getItem('mng_user_name') || 'Guest',
             text: text,
             time: timeStr,
+            timestamp: now.getTime(),
             status: status,
             avatar: "https://images.unsplash.com/photo-1637059824899-a441006a6875?q=80&w=452&auto=format&fit=crop"
         };

@@ -11,6 +11,7 @@ const BotFab = lazy(() => import('./components/BotFab'));
 function App() {
   const [userName, setUserName] = useState(localStorage.getItem('mng_user_name') || 'Guest');
   const [userRole, setUserRole] = useState(localStorage.getItem('mng_user_role') || null);
+  const [meetingId, setMeetingId] = useState(localStorage.getItem('mng_meeting_id') || '');
   const [sessionReady, setSessionReady] = useState(false);
   const [chatHidden, setChatHidden] = useState(true);
 
@@ -23,6 +24,7 @@ function App() {
   const handleLogin = (name, role, meetingId, company) => {
     setUserName(name);
     setUserRole(role);
+    setMeetingId(meetingId);
     localStorage.setItem('mng_user_name', name);
     localStorage.setItem('mng_user_role', role);
     if (meetingId) localStorage.setItem('mng_meeting_id', meetingId);
@@ -33,22 +35,40 @@ function App() {
     }, 400);
   };
 
-  const handleLogout = async () => {
-    if (window.confirm("Are you sure you want to end this virtual meeting?")) {
-        const meetingId = localStorage.getItem('mng_meeting_id');
-        if (meetingId) {
+  const handleLogout = () => {
+    if (window.confirm("Are you sure you want to log out?")) {
+        setUserName('Guest');
+        setUserRole(null);
+        setMeetingId('');
+        localStorage.removeItem('mng_user_name');
+        localStorage.removeItem('mng_user_role');
+        localStorage.removeItem('mng_meeting_id');
+        localStorage.removeItem('mng_company');
+        localStorage.removeItem('mng_session_questions');
+        localStorage.removeItem('mng_team_chat');
+        localStorage.removeItem('mng_ai_chat');
+        window.location.reload();
+    }
+  };
+
+  const handleEndMeeting = async () => {
+    if (window.confirm("Are you sure you want to completely end this virtual meeting for all users?")) {
+        const mId = localStorage.getItem('mng_meeting_id');
+        if (mId) {
             try {
-                // Call end_meeting API before clearing data
                 await fetch('/api/end_meeting', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ meeting_id: meetingId })
+                    body: JSON.stringify({ meeting_id: mId })
                 });
             } catch (err) {
                 console.error("Failed to end meeting:", err);
             }
         }
 
+        setUserName('Guest');
+        setUserRole(null);
+        setMeetingId('');
         localStorage.removeItem('mng_user_name');
         localStorage.removeItem('mng_user_role');
         localStorage.removeItem('mng_meeting_id');
@@ -102,6 +122,7 @@ function App() {
           <Header 
             userName={userName} 
             userRole={userRole} 
+            meetingId={meetingId}
             onLogout={handleLogout} 
             chatHidden={chatHidden}
             setChatHidden={setChatHidden}
@@ -109,10 +130,11 @@ function App() {
           <div className="workspace-body">
             <Suspense fallback={<div style={{ display: 'none' }}></div>}>
                 <VideoGrid />
-                <FloatingDock onEnd={handleLogout} />
+                <FloatingDock onEnd={handleEndMeeting} userRole={userRole} />
                 <ChatColumn 
                   userName={userName} 
                   userRole={userRole} 
+                  meetingId={meetingId}
                   chatHidden={chatHidden} 
                 />
             </Suspense>
