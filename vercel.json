@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:match*",
-      "destination": "http://194.228.55.129:38276/:match*"
+      "destination": "http://185.62.108.226:51745/:match*"
     },
     {
       "source": "/(.*)",
